@@ -1,6 +1,6 @@
 Index: config/jextreme.properties
 ===================================================================
---- config/jextreme.properties	(revision 0)
+--- config/jextreme.properties	(revision 1.0)
 +++ config/jextreme.properties	(working copy)
 @@
 +#=============================================================
@@ -16,7 +16,7 @@ Index: config/jextreme.properties
 
 Index: java/net/sf/l2j/Config.java
 ===================================================================
---- java/net/sf/l2j/Config.java	(revision XXX)
+--- java/net/sf/l2j/Config.java	(revision 1.0)
 +++ java/net/sf/l2j/Config.java	(working copy)
 @@
 +	public static boolean ANTI_DUALBOX_ENABLE;
@@ -45,7 +45,7 @@ Index: java/net/sf/l2j/Config.java
 
 Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 ===================================================================
---- java/net/sf/l2j/gameserver/custom/Antidualbox.java	(revision 0)
+--- java/net/sf/l2j/gameserver/custom/Antidualbox.java	(revision 1.0)
 +++ java/net/sf/l2j/gameserver/custom/Antidualbox.java	(working copy)
 @@
 +package net.sf.l2j.gameserver.custom;
@@ -57,6 +57,11 @@ Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 +import net.sf.l2j.commons.pool.ThreadPool;
 +import net.sf.l2j.gameserver.model.World;
 +import net.sf.l2j.gameserver.model.actor.Player;
++
++/**
++* @author ViniciusDev
++*
++*/
 +
 +public class Antidualbox
 +{
@@ -124,7 +129,7 @@ Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 
 Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
 ===================================================================
---- java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(revision XXX)
+--- java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(revision 1.0)
 +++ java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(working copy)
 @@
 +import net.sf.l2j.gameserver.custom.Antidualbox;
