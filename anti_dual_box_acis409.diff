@@ -1,0 +1,122 @@
+Index: config/jextreme.properties
+===================================================================
+--- config/jextreme.properties	(revision 0)
++++ config/jextreme.properties	(working copy)
+@@
++#=============================================================
++#               Anti DualBox System
++#=============================================================
++
++# Ativa o Anti DualBox
++AntiDualBoxEnable = true
++
++# Máximo de contas permitidas por IP
++AntiDualBoxMaxConnections = 2
+
+
+Index: java/net/sf/l2j/Config.java
+===================================================================
+--- java/net/sf/l2j/Config.java	(revision XXX)
++++ java/net/sf/l2j/Config.java	(working copy)
+@@
++	public static boolean ANTI_DUALBOX_ENABLE;
++	public static int ANTI_DUALBOX_MAX_CONNECTIONS;
+@@
++		ANTI_DUALBOX_ENABLE = Boolean.parseBoolean(jextreme.getProperty("AntiDualBoxEnable", "false"));
++		ANTI_DUALBOX_MAX_CONNECTIONS = Integer.parseInt(jextreme.getProperty("AntiDualBoxMaxConnections", "1"));
+
+
+Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
+===================================================================
+--- java/net/sf/l2j/gameserver/custom/Antidualbox.java	(revision 0)
++++ java/net/sf/l2j/gameserver/custom/Antidualbox.java	(working copy)
+@@
++package net.sf.l2j.gameserver.custom;
++
++import net.sf.l2j.commons.pool.ThreadPool;
++import net.sf.l2j.Config;
++import net.sf.l2j.gameserver.model.World;
++import net.sf.l2j.gameserver.model.actor.Player;
++/*
++ * Anti DualBox System
++ *
++ * @author Vinicius Gonçalves
++ */
++public class Antidualbox
++{
++	private static final int DISCONNECT_DELAY = 20_000;
++
++	public static void checkAndPunish(Player player)
++	{
++		if (!Config.ANTI_DUALBOX_ENABLE)
++			return;
++
++		if (player.isGM())
++			return;
++
++		final String myIp = getClientAddress(player);
++		if (myIp == null)
++			return;
++
++		int connections = 0;
++
++		for (Player other : World.getInstance().getPlayers())
++		{
++			if (other == null || other == player || other.isGM())
++				continue;
++
++			final String otherIp = getClientAddress(other);
++			if (otherIp == null)
++				continue;
++
++			if (myIp.equals(otherIp))
++			{
++				connections++;
++
++				if (connections >= Config.ANTI_DUALBOX_MAX_CONNECTIONS)
++				{
++					punish(player);
++					return;
++				}
++			}
++		}
++	}
++
++	private static void punish(Player player)
++	{
++		player.sendMessage("DualBox não é permitido neste servidor.");
++		player.sendMessage("Você será desconectado em 20 segundos.");
++
++		ThreadPool.schedule(() ->
++		{
++			if (player.isOnline())
++				player.logout(true);
++		}, DISCONNECT_DELAY);
++	}
++
++	private static String getClientAddress(Player player)
++	{
++		try
++		{
++			return player.getClient().getConnection().getInetAddress().getHostAddress();
++		}
++		catch (Exception e)
++		{
++			return null;
++		}
++	}
++}
+
+
+Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
+===================================================================
+--- java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(revision XXX)
++++ java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(working copy)
+@@
++import net.sf.l2j.gameserver.custom.Antidualbox;
+@@
+ 		player.onPlayerEnter();
++
++		Antidualbox.checkAndPunish(player);
+ 
+ 		sendPacket(new SkillCoolTime(player));
