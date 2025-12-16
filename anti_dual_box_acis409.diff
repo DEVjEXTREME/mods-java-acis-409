@@ -7,12 +7,12 @@ Index: config/jextreme.properties
 +#               Anti DualBox System
 +#=============================================================
 +
-+# Ativa o Anti DualBox
 +AntiDualBoxEnable = true
-+
-+# Máximo de contas permitidas por IP
 +AntiDualBoxMaxConnections = 2
-
++
++# IPs liberados (LAN house / cyber café)
++# Separe por vírgula
++AntiDualBoxWhitelistedIps = 189.10.20.30,177.55.66.77
 
 Index: java/net/sf/l2j/Config.java
 ===================================================================
@@ -21,10 +21,27 @@ Index: java/net/sf/l2j/Config.java
 @@
 +	public static boolean ANTI_DUALBOX_ENABLE;
 +	public static int ANTI_DUALBOX_MAX_CONNECTIONS;
++	public static String ANTI_DUALBOX_WHITELISTED_IPS;
++
 @@
-+		ANTI_DUALBOX_ENABLE = Boolean.parseBoolean(jextreme.getProperty("AntiDualBoxEnable", "false"));
-+		ANTI_DUALBOX_MAX_CONNECTIONS = Integer.parseInt(jextreme.getProperty("AntiDualBoxMaxConnections", "1"));
-
+ 		try
+ 		{
+ 			Properties custom = new Properties();
+ 			InputStream is = new FileInputStream(new File(CUSTOM_CONFIG_FILE));
+ 			custom.load(is);
+ 			is.close();
++
++			// ============================================================
++			// Anti DualBox System
++			// ============================================================
++			ANTI_DUALBOX_ENABLE = Boolean.parseBoolean(custom.getProperty("AntiDualBoxEnable", "false"));
++			ANTI_DUALBOX_MAX_CONNECTIONS = Integer.parseInt(custom.getProperty("AntiDualBoxMaxConnections", "1"));
++			ANTI_DUALBOX_WHITELISTED_IPS = custom.getProperty("AntiDualBoxWhitelistedIps", "");
+ 		}
+ 		catch (Exception e)
+ 		{
+ 			_log.warning("Error loading jextreme.properties");
+ 		}
 
 Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 ===================================================================
@@ -33,53 +50,51 @@ Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 @@
 +package net.sf.l2j.gameserver.custom;
 +
-+import net.sf.l2j.commons.pool.ThreadPool;
++import java.util.HashSet;
++import java.util.Set;
++
 +import net.sf.l2j.Config;
++import net.sf.l2j.commons.pool.ThreadPool;
 +import net.sf.l2j.gameserver.model.World;
 +import net.sf.l2j.gameserver.model.actor.Player;
-+/*
-+ * Anti DualBox System
-+ *
-+ * @author Vinicius Gonçalves
-+ */
++
 +public class Antidualbox
 +{
 +	private static final int DISCONNECT_DELAY = 20_000;
++	private static final Set<String> WHITELISTED_IPS = new HashSet<>();
++
++	static
++	{
++		if (Config.ANTI_DUALBOX_WHITELISTED_IPS != null && !Config.ANTI_DUALBOX_WHITELISTED_IPS.isEmpty())
++		{
++			for (String ip : Config.ANTI_DUALBOX_WHITELISTED_IPS.split(","))
++				WHITELISTED_IPS.add(ip.trim());
++		}
++	}
 +
 +	public static void checkAndPunish(Player player)
 +	{
-+		if (!Config.ANTI_DUALBOX_ENABLE)
++		if (!Config.ANTI_DUALBOX_ENABLE || player == null || player.isGM())
 +			return;
 +
-+		if (player.isGM())
-+			return;
-+
-+		final String myIp = getClientAddress(player);
-+		if (myIp == null)
++		final String ip = getClientAddress(player);
++		if (ip == null || WHITELISTED_IPS.contains(ip))
 +			return;
 +
 +		int connections = 0;
 +
 +		for (Player other : World.getInstance().getPlayers())
 +		{
-+			if (other == null || other == player || other.isGM())
++			if (other == null || other.isGM())
 +				continue;
 +
 +			final String otherIp = getClientAddress(other);
-+			if (otherIp == null)
-+				continue;
-+
-+			if (myIp.equals(otherIp))
-+			{
++			if (ip.equals(otherIp))
 +				connections++;
-+
-+				if (connections >= Config.ANTI_DUALBOX_MAX_CONNECTIONS)
-+				{
-+					punish(player);
-+					return;
-+				}
-+			}
 +		}
++
++		if (connections > Config.ANTI_DUALBOX_MAX_CONNECTIONS)
++			punish(player);
 +	}
 +
 +	private static void punish(Player player)
@@ -106,7 +121,6 @@ Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 +		}
 +	}
 +}
-
 
 Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
 ===================================================================
