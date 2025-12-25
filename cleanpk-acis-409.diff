@@ -38,10 +38,9 @@ Index: java/net/sf/l2j/gameserver/handler/itemhandlers/CleanPkItem.java
 +import net.sf.l2j.gameserver.model.item.instance.ItemInstance;
 +
 +/**
-+* @author Vinícius Gonçalves
-+*
-+*/
-+
++ * Vinícius Gonçalves
++ *
++ */
 +public class CleanPkItem implements IItemHandler
 +{
 +    @Override
@@ -95,3 +94,4 @@ Index: config/jextreme.properties
 +CleanPkItemAmount = 1
 +
 +CleanPkRemove = 50
+
