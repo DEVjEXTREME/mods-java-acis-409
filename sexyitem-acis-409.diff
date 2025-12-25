@@ -40,7 +40,7 @@ Index: java/net/sf/l2j/gameserver/handler/itemhandlers/ChangeSexItem.java
 +import net.sf.l2j.gameserver.enums.actors.Sex;
 +
 +/**
-+ * Vinícius Gonçalves
++ * @author Vinícius Gonçalves
 + *
 + */
 +public class ChangeSexItem implements IItemHandler
@@ -100,4 +100,5 @@ Index: config/jextreme.properties
 +
 +ChangeSexCoinAmount = 1
 +
+
 
