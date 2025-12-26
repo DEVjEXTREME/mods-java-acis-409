@@ -11,12 +11,6 @@ Os mods são organizados por pastas e focados em:
 
 > 🔧 Projeto voltado para **desenvolvedores de servidores privados Lineage 2 Interlude**.
 
----
-
-## 📌 Base suportada
-- Lineage 2 **Interlude**
-- **aCis 409**
-- L2J-based
 
 ---
 
