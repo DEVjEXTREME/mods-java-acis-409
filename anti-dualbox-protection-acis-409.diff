@@ -1,8 +1,6 @@
 Index: config/jextreme.properties
 ===================================================================
---- config/jextreme.properties	(revision 1.0)
-+++ config/jextreme.properties	(working copy)
-@@
+
 +#=============================================================
 +#               Anti DualBox System
 +#=============================================================
@@ -16,9 +14,7 @@ Index: config/jextreme.properties
 
 Index: java/net/sf/l2j/Config.java
 ===================================================================
---- java/net/sf/l2j/Config.java	(revision 1.0)
-+++ java/net/sf/l2j/Config.java	(working copy)
-@@
+
 +	public static boolean ANTI_DUALBOX_ENABLE;
 +	public static int ANTI_DUALBOX_MAX_CONNECTIONS;
 +	public static String ANTI_DUALBOX_WHITELISTED_IPS;
@@ -45,9 +41,7 @@ Index: java/net/sf/l2j/Config.java
 
 Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 ===================================================================
---- java/net/sf/l2j/gameserver/custom/Antidualbox.java	(revision 1.0)
-+++ java/net/sf/l2j/gameserver/custom/Antidualbox.java	(working copy)
-@@
+
 +package net.sf.l2j.gameserver.custom;
 +
 +import java.util.HashSet;
@@ -128,9 +122,7 @@ Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 
 Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
 ===================================================================
---- java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(revision 1.0)
-+++ java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java	(working copy)
-@@
+
 +import net.sf.l2j.gameserver.custom.Antidualbox;
 @@
  		player.onPlayerEnter();
@@ -138,5 +130,6 @@ Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
 +		Antidualbox.checkAndPunish(player);
  
  		sendPacket(new SkillCoolTime(player));
+
 
 
