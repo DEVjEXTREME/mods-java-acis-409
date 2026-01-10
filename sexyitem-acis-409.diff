@@ -1,22 +1,11 @@
-### Eclipse Workspace Patch 1.0
-#P aCis_gameserver
-
 Index: java/net/sf/l2j/Config.java
 ===================================================================
---- a/java/net/sf/l2j/Config.java
-+++ b/java/net/sf/l2j/Config.java
-@@ -385,6 +385,10 @@
-     public static boolean ENABLE_VIP_NPC;
-     public static int VIP_NPC_ID;
  
 +    public static boolean ENABLE_CHANGESEX_COIN;
 +    public static int CHANGESEX_COIN_ID;
 +    public static int CHANGESEX_COIN_AMOUNT;
 +
-@@ -745,6 +749,10 @@
-         ENABLE_VIP_NPC = jextreme.getProperty("EnableVipNpc", false);
-         VIP_NPC_ID = jextreme.getProperty("VipNpcId", 0);
- 
+
 +        ENABLE_CHANGESEX_COIN = jextreme.getProperty("EnableChangeSexItem", false);
 +        CHANGESEX_COIN_ID = jextreme.getProperty("ChangeSexCoinId", 0);
 +        CHANGESEX_COIN_AMOUNT = jextreme.getProperty("ChangeSexCoinAmount", 1);
@@ -24,9 +13,6 @@ Index: java/net/sf/l2j/Config.java
 
 Index: java/net/sf/l2j/gameserver/handler/itemhandlers/ChangeSexItem.java
 ===================================================================
---- /dev/null
-+++ b/java/net/sf/l2j/gameserver/handler/itemhandlers/ChangeSexItem.java
-@@ -0,0 +1,69 @@
 +package net.sf.l2j.gameserver.handler.itemhandlers;
 +
 +import net.sf.l2j.commons.pool.ThreadPool;
@@ -84,12 +70,7 @@ Index: java/net/sf/l2j/gameserver/handler/itemhandlers/ChangeSexItem.java
 
 Index: config/jextreme.properties
 ===================================================================
---- a/config/jextreme.properties
-+++ b/config/jextreme.properties
-@@ -665,6 +665,18 @@
- #Set Days For Vip chars From Npc
- VipSetDays = 15
- 
+
 +# --------------------
 +# ChangeSex Item
 +# --------------------
@@ -100,5 +81,6 @@ Index: config/jextreme.properties
 +
 +ChangeSexCoinAmount = 1
 +
+
 
 
