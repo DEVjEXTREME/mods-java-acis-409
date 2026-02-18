@@ -65,13 +65,14 @@ Index: config/custom/jextreme.properties
 ===================================================================
 
 +# =================================================================
-+# Clean PK Item
++#                   Clean PK Item
 +# =================================================================
 +
 +EnableCleanPkItem = True
 +CleanPkItemId = 20001
 +CleanPkItemAmount = 1
 +CleanPkRemove = 50
+
 
 
 
