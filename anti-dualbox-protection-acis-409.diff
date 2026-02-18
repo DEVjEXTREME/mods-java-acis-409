@@ -1,9 +1,9 @@
 Index: config/jextreme.properties
 ===================================================================
 
-+#=============================================================
-+#               Anti DualBox System
-+#=============================================================
++# =================================================================
++#                    Anti DualBox System
++# =================================================================
 +
 +AntiDualBoxEnable = true
 +AntiDualBoxMaxConnections = 2
@@ -20,24 +20,11 @@ Index: java/net/sf/l2j/Config.java
 +	public static String ANTI_DUALBOX_WHITELISTED_IPS;
 +
 
- 		try
- 		{
- 			Properties custom = new Properties();
- 			InputStream is = new FileInputStream(new File(CUSTOM_CONFIG_FILE));
- 			custom.load(is);
- 			is.close();
 +
-+			// ============================================================
-+			// Anti DualBox System
-+			// ============================================================
-+			ANTI_DUALBOX_ENABLE = Boolean.parseBoolean(jextreme.getProperty("AntiDualBoxEnable", "false"));
-+			ANTI_DUALBOX_MAX_CONNECTIONS = Integer.parseInt(jextreme.getProperty("AntiDualBoxMaxConnections", "1"));
-+			ANTI_DUALBOX_WHITELISTED_IPS = jextreme.getProperty("AntiDualBoxWhitelistedIps", "");
- 		}
- 		catch (Exception e)
- 		{
- 			_log.warning("Error loading jextreme.properties");
- 		}
++ ANTI_DUALBOX_ENABLE = Boolean.parseBoolean(jextreme.getProperty("AntiDualBoxEnable", "false"));
++ ANTI_DUALBOX_MAX_CONNECTIONS = Integer.parseInt(jextreme.getProperty("AntiDualBoxMaxConnections", "1"));
++ ANTI_DUALBOX_WHITELISTED_IPS = jextreme.getProperty("AntiDualBoxWhitelistedIps", "");
+
 
 Index: java/net/sf/l2j/gameserver/custom/Antidualbox.java
 ===================================================================
@@ -175,3 +162,4 @@ Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
 +		Antidualbox.checkAndPunish(player);
  
  		sendPacket(new SkillCoolTime(player));
+
