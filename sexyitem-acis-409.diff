@@ -68,19 +68,18 @@ Index: java/net/sf/l2j/gameserver/handler/itemhandlers/ChangeSexItem.java
 +    }
 +}
 
-Index: config/jextreme.properties
+Index: config/custom/jextreme.properties
 ===================================================================
 
-+# --------------------
-+# ChangeSex Item
-+# --------------------
++# =================================================================
++#                   ChangeSex Item
++# =================================================================
 +
 +EnableChangeSexItem = True
-+
 +ChangeSexCoinId = 20000
-+
 +ChangeSexCoinAmount = 1
 +
+
 
 
 
