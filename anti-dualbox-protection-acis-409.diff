@@ -1,4 +1,4 @@
-Index: config/jextreme.properties
+Index: config/custom/jextreme.properties
 ===================================================================
 
 +# =================================================================
@@ -162,4 +162,5 @@ Index: java/net/sf/l2j/gameserver/network/clientpackets/EnterWorld.java
 +		Antidualbox.checkAndPunish(player);
  
  		sendPacket(new SkillCoolTime(player));
+
 
