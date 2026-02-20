@@ -1,0 +1,145 @@
+java/net/sf/l2j/gameserver/enums/skills/EffectType.java
+===================================================================
+
+ public enum EffectType
+ {
+ 	BLOCK_BUFF,
+ 	BLOCK_DEBUFF,
++	PREVENT_BUFF,
+ 	
+ 	BUFF,
+ 	DEBUFF,
+
+java/net/sf/l2j/gameserver/model/actor/Creature.java
+===================================================================
+
+ public abstract class Creature extends WorldObject
+ {
++	private boolean _isBuffProtected = false;
++	
++	public final void setIsBuffProtected(boolean value)
++	{
++		_isBuffProtected = value;
++	}
++	
++	public boolean isBuffProtected()
++	{
++		return _isBuffProtected;
++	}
++
+ 	protected String _title;
+
+java/net/sf/l2j/gameserver/handler/skillhandlers/Continuous.java
+===================================================================
+
+ 				case BUFF:
+ 					// Target under buff immunity.
+ 					if (targetCreature.getFirstEffect(EffectType.BLOCK_BUFF) != null)
+ 						continue;
++
++					// Anti-Buff Protection: prevents buffs from other players
++					if (player != null && targetCreature instanceof Player)
++					{
++						if (targetCreature != creature
++							&& targetCreature.isBuffProtected()
++							&& !skill.isHeroSkill())
++						{
++							switch (skill.getSkillType())
++							{
++								case BUFF:
++								case REFLECT:
++									continue;
++							}
++						}
++					}
+ 
+ 					// Player holding a cursed weapon can't be buffed and can't buff
+ 					if (!(creature instanceof ClanHallManagerNpc) && targetCreature != creature)
+
+java/net/sf/l2j/gameserver/skills/effects/EffectDeflectBuff.java
+===================================================================
+
++package net.sf.l2j.gameserver.skills.effects;
++
++import net.sf.l2j.gameserver.enums.skills.EffectType;
++import net.sf.l2j.gameserver.model.actor.Creature;
++import net.sf.l2j.gameserver.skills.AbstractEffect;
++import net.sf.l2j.gameserver.enums.skills.AbnormalEffect;
++import net.sf.l2j.gameserver.skills.L2Skill;
+
++
++/**
++ * @author Vinícius Gonçalves
++ *
++ */
++public final class EffectDeflectBuff extends AbstractEffect
++{
++	public EffectDeflectBuff(EffectTemplate template, L2Skill skill, Creature effected, Creature effector)
++	{
++		super(template, skill, effected, effector);
++	}
++
++	@Override
++	public EffectType getEffectType()
++	{
++		return EffectType.PREVENT_BUFF;
++	}
++
++	@Override
++   public boolean onStart()
++   {
++    // Mantém sua lógica Anti-Buff
++    getEffected().setIsBuffProtected(true);
++
++    // Ativa efeito visual FLAME
++    getEffected().startAbnormalEffect(AbnormalEffect.FLAME.getMask());
++
++    return true;
++  }
++
++   @Override
++   public void onExit()
++   {
++    // Remove proteção Anti-Buff
++    getEffected().setIsBuffProtected(false);
++
++    // Remove efeito visual FLAME
++     getEffected().stopAbnormalEffect(AbnormalEffect.FLAME.getMask());
++  }
++
++  @Override
++  public boolean onActionTime()
++  {
++    // Mantém o toggle ativo
++    return true;
++  }
++}
+
+data/xml/skills/AntiBuff.xml
+===================================================================
+
+<?xml version="1.0" encoding="UTF-8"?>
++<list>
++	<skill id="8000" levels="1" name="AntiBuff">
++		<set name="target" val="SELF"/>
++		<set name="skillType" val="CONT"/>
++		<set name="operateType" val="TOGGLE"/>
++		<for>
++			<effect count="0x7fffffff" name="DeflectBuff" time="3" val="0"/>
++		</for>
++	</skill>
++</list>
+
+data/xml/classes/Fighter.xml
+===================================================================
+
+ 	<skills>
++
++		<!-- Anti-Buff -->
++		<skill id="8000" lvl="1" cost="0" minLvl="1"/>
++
+ 		<skill id="1" lvl="1" cost="0" minLvl="1"/>
+ 		<skill id="2" lvl="1" cost="0" minLvl="1"/>
+ 	</skills>
+
+
